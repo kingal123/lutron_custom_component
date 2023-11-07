@@ -1,21 +1,5 @@
 # lutron_custom_component
-Lutron custom component for HA using pylutron
-
-Works with Homeworks with QS, and is integratable into HACS.
-
-This is using a fork of pylutron , which is currently a PR https://github.com/thecynic/pylutron/pull/52 .
-
-This PR is adding:
-- support for Homeworks QS.
-- support for recursive areas in naming
-- areas with IntegrationID are OccupancyGroup
-- OUTPUT to support movement raise, lower, stop, jogs(eg for motors)
-- buttons: support for actions 
-- corrected led states
-- support for QS_IO_INTERFACE
-- support for phantom keypads
-- support for seetouch international keypads
-- support for CCI
+Lutron custom component for HA using custom veresion of pylutron. Works with and tested for Homeworks QS, and is set up as HACS component.
 
 Features:
 - ability to include a `db_file` to the configuration, so that the Lutron component can cache the data
@@ -26,9 +10,9 @@ lutron:
   password: password
   db_file: 'Lutron.xml'
 ```
-- leds in keypad's buttons that are configured as "integration", are created as Light devices `LutronLedLight`, so you can control them
-- binary sensors for Occupancy group
-- buttons to support press, release, hold, double tap, and hold release status
-- added a new `LutronMotorBlind` to support motorized shades/blinds via a Motor output (e.g )
+- LEDs in keypad's buttons that are configured as "integration", are created as Light devices `LutronLedLight`, so you can control them
+- Binary sensors for Occupancy group
+- Buttons to support press, release, hold, double tap, and hold release status
+- Added a new `LutronMotorBlind` to support motorized shades/blinds via a Motor output
 
-The custom component is loading the `pylutron` branch using `  "requirements": ["git+https://github.com/rzulian/pylutron.git@homeworks-support#pylutron==0.2.6"],` in `manifest.json`.
+The custom component is loading the custom `pylutron` version in `manifest.json`.
