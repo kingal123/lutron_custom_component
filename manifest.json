@@ -2,7 +2,7 @@
   "domain": "lutron",
   "name": "Lutron",
   "documentation": "https://www.home-assistant.io/integrations/lutron",
-  "requirements": ["git+https://github.com/the-joeyy/pylutron.git@0.3.1#pylutron=0.3.1"],
+  "requirements": ["git+https://github.com/the-joeyy/pylutron.git@0.3.1#pylutron==0.3.1"],
   "dependencies": [],
   "codeowners": ["@JonGilmore"],
   "version": "v0.0.0"
