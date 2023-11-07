@@ -1,6 +1,8 @@
 # lutron_custom_component
 Lutron custom component for HA using pylutron
 
+Works with Homeworks with QS, and is integratable into HACS.
+
 This is using a fork of pylutron , which is currently a PR https://github.com/thecynic/pylutron/pull/52 .
 
 This PR is adding:
