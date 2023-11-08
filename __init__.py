@@ -74,9 +74,10 @@ def setup(hass, base_config):
         _LOGGER.debug("For Area %s, found %d Outputs, %d Keypads" % (area.name, len(area.outputs), len(area.keypads)))
 
         for output in area.outputs:
+            _LOGGER.debug("Sorting Output %s in Area %s" % (output.name, area.name))
             if output.type in ("SYSTEM_SHADE", "MOTOR"):
                 hass.data[LUTRON_DEVICES]["cover"].append((area.name, output))
-            elif output.is_light:
+            elif hasattr(output, "is_light") and output.is_light:
                 hass.data[LUTRON_DEVICES]["light"].append((area.name, output))
             else:
                 hass.data[LUTRON_DEVICES]["switch"].append((area.name, output))
