@@ -66,7 +66,7 @@ def setup(hass, base_config):
 
     hass.data[LUTRON_CONTROLLER].load_xml_db(db_file)
     hass.data[LUTRON_CONTROLLER].connect()
-    _LOGGER.info("Connected to main repeater at %s" % config[CONF_HOST])
+    _LOGGER.info("Connected to Lutron host at %s" % config[CONF_HOST])
 
     # Sort our devices into types
     _LOGGER.debug("Creating entities, found %d Areas" % len(hass.data[LUTRON_CONTROLLER].areas))
@@ -74,7 +74,7 @@ def setup(hass, base_config):
         _LOGGER.debug("For Area %s, found %d Outputs, %d Keypads" % (area.name, len(area.outputs), len(area.keypads)))
 
         for output in area.outputs:
-            _LOGGER.debug("Sorting Output %s in Area %s" % (output.name, area.name))
+            _LOGGER.debug("Sorting Output %s in Area %s, has is_light" % (output.name, area.name))
             if output.type in ("SYSTEM_SHADE", "MOTOR"):
                 hass.data[LUTRON_DEVICES]["cover"].append((area.name, output))
             elif hasattr(output, "is_light") and output.is_light:
