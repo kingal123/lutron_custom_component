@@ -14,6 +14,8 @@ DOMAIN = "lutron"
 
 _LOGGER = logging.getLogger(__name__)
 
+ENABLE_OCCUPANCY = False
+
 LUTRON_BUTTONS = "lutron_buttons"
 LUTRON_CONTROLLER = "lutron_controller"
 LUTRON_DEVICES = "lutron_devices"
@@ -40,6 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 def setup(hass, base_config):
     """Set up the Lutron component."""
+    _LOGGER.debug("Beginning setup routine")
 
     hass.data[LUTRON_BUTTONS] = []
     hass.data[LUTRON_CONTROLLER] = None
@@ -63,10 +66,13 @@ def setup(hass, base_config):
 
     hass.data[LUTRON_CONTROLLER].load_xml_db(db_file)
     hass.data[LUTRON_CONTROLLER].connect()
-    _LOGGER.info("Connected to main repeater at %s", config[CONF_HOST])
+    _LOGGER.info("Connected to main repeater at %s" % config[CONF_HOST])
 
     # Sort our devices into types
+    _LOGGER.debug("Creating entities, found %d Areas" % len(hass.data[LUTRON_CONTROLLER].areas))
     for area in hass.data[LUTRON_CONTROLLER].areas:
+        _LOGGER.debug("For Area %s, found %d Outputs, %d Keypads" % (area.name, len(area.outputs), len(area.keypads)))
+
         for output in area.outputs:
             if output.type in ("SYSTEM_SHADE", "MOTOR"):
                 hass.data[LUTRON_DEVICES]["cover"].append((area.name, output))
@@ -74,6 +80,7 @@ def setup(hass, base_config):
                 hass.data[LUTRON_DEVICES]["light"].append((area.name, output))
             else:
                 hass.data[LUTRON_DEVICES]["switch"].append((area.name, output))
+
         for keypad in area.keypads:
             for button in keypad.buttons:
                 # If the button has a function assigned to it, add it as a scene
@@ -89,11 +96,12 @@ def setup(hass, base_config):
                     "SimpleConditional"
                 ):
                     # Associate an LED with a button if there is one
-                    # TODO check this a led is a scene???
+                    # TODO check this a led is a scene?
                     led = next(
                         (led for led in keypad.leds if led.number == button.number),
                         None,
                     )
+                    _LOGGER.debug("Adding Scene for area %s, keypad %s, button %s" % (area.name, keypad.name, button.name))
                     hass.data[LUTRON_DEVICES]["scene"].append(
                          (area.name, keypad.name, button, led)
                     )
@@ -101,17 +109,19 @@ def setup(hass, base_config):
                     # Add the LED as a light device if is controlled via integration
                     if not(led is None) and button.led_logic==5:
                         hass.data[LUTRON_DEVICES]["led"].append((area.name, keypad.name, led))
-                        
+
                 hass.data[LUTRON_BUTTONS].append(
                     LutronButton(hass, area.name, keypad, button)
-                )      
-        if area.occupancy_group is not None:
+                )
+
+        if ENABLE_OCCUPANCY and area.occupancy_group is not None:
             hass.data[LUTRON_DEVICES]["binary_sensor"].append(
                 (area.name, area.occupancy_group)
             )
 
     for component in ("light", "cover", "switch", "scene", "binary_sensor"):
         discovery.load_platform(hass, component, DOMAIN, {}, base_config)
+
     return True
 
 
