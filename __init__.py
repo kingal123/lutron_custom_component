@@ -10,7 +10,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-DOMAIN = "lutron"
+DOMAIN = "lutronqs"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 def setup(hass, base_config):
     """Set up the Lutron component."""
-    _LOGGER.debug("Beginning setup routine")
+    _LOGGER.debug("Beginning lutronqs version 1.0.2 setup routine")
 
     hass.data[LUTRON_BUTTONS] = []
     hass.data[LUTRON_CONTROLLER] = None

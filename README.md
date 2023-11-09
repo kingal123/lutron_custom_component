@@ -4,7 +4,7 @@ Lutron custom component for HA using custom veresion of pylutron. Works with and
 Features:
 - ability to include a `db_file` to the configuration, so that the Lutron component can cache the data
 ```
-lutron:
+lutronqs:
   host: 192.168.1.23
   username: lutron
   password: password
