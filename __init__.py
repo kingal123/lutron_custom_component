@@ -169,7 +169,7 @@ class LutronButton:
         name = f"{keypad.name}: {button.name}"
         self._hass = hass
         self._has_release_event = (
-            button.button_type is not None and  button.button_type in ("RaiseLower", "DualAction" )
+            button.button_type is not None and button.button_type in ("RaiseLower", "DualAction")
         )
         self._id = slugify(name)
         self._keypad = keypad

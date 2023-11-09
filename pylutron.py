@@ -1,5 +1,5 @@
 """
-Lutron RadioRA 2 module for interacting with the Main Repeater. Basic operations
+Lutron HomeworksQS module for interacting with the main processor. Basic operations
 for enumerating and controlling the loads are supported.
 
 """
@@ -238,7 +238,7 @@ class LutronXmlDbParser(object):
         #     <Areas ...>
         #       <Area ...>
 
-        # The GUID is unique to the repeater and is useful for constructing unique
+        # The GUID is unique to the processor and is useful for constructing unique
         # identifiers that won't change over time.
         self._lutron.set_guid(root.find('GUID').text)
 
@@ -589,7 +589,7 @@ class Lutron(object):
             url = 'http://' + self._host + '/DbXmlInfo.xml?login=lutron&password=lutron'
             with urllib.request.urlopen(url) as xmlfile:
                 xml_db = xmlfile.read()
-                loaded_from = 'repeater'
+                loaded_from = 'processor'
 
         _LOGGER.info("Loaded XML DB from %s, size %d" % (loaded_from, len(xml_db)))
 
@@ -601,7 +601,7 @@ class Lutron(object):
         _LOGGER.info('Found Lutron project: %s with %d areas' % (
             self._name, len(self.areas)))
 
-        if cache_path and loaded_from == 'repeater':
+        if cache_path and loaded_from == 'processor':
             with open(cache_path, 'wb') as f:
                 f.write(xml_db)
                 _LOGGER.debug('Wrote XML DB cache file to %s' % cache_path)
