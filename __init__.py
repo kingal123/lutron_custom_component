@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 def setup(hass, base_config):
     """Set up the Lutron component."""
-    _LOGGER.debug("Beginning lutronqs version 1.0.2 setup routine")
+    _LOGGER.debug("Beginning lutronqs version 1.0.3 setup routine")
 
     hass.data[LUTRON_BUTTONS] = []
     hass.data[LUTRON_CONTROLLER] = None
