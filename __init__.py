@@ -108,8 +108,8 @@ def setup(hass, base_config):
                     )
 
                     # Add the LED as a light device if is controlled via integration
-                    if not(led is None) and button.led_logic==5:
-                        hass.data[LUTRON_DEVICES]["led"].append((area.name, keypad.name, led))
+                    if not(led is None): # and button.led_logic==5:
+                        hass.data[LUTRON_DEVICES]["led"].append((area.name, keypad.name, button.name, led))
 
                 hass.data[LUTRON_BUTTONS].append(
                     LutronButton(hass, area.name, keypad, button)

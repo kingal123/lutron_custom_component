@@ -20,8 +20,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         dev = LutronLight(area_name, device, hass.data[LUTRON_CONTROLLER])
         devs.append(dev)
     
-    for (area_name, keypad_name, device) in hass.data[LUTRON_DEVICES]["led"]:
-        dev = LutronLedLight(area_name, keypad_name, device, hass.data[LUTRON_CONTROLLER])
+    for (area_name, keypad_name, button_name, device) in hass.data[LUTRON_DEVICES]["led"]:
+        dev = LutronLedLight(area_name, keypad_name, button_name, device, hass.data[LUTRON_CONTROLLER])
         devs.append(dev)
 
     add_entities(devs, True)
@@ -96,16 +96,18 @@ class LutronLight(LutronDevice, LightEntity):
 class LutronLedLight(LutronDevice, LightEntity):
     """Representation of a Lutron Led."""
 
-    def __init__(self, area_name, keypad_name, lutron_device, controller):
+    def __init__(self, area_name, keypad_name, button_name, lutron_device, controller):
         """Initialize the light."""
         self._state = None
         self._keypad_name = keypad_name
+        self._button_name = button_name
+        self._lutron_device = lutron_device
         super().__init__(area_name, lutron_device, controller)
     
     @property
     def name(self):
         """Return the name of the device."""
-        return f"{self._area_name} {self._keypad_name}: {self._lutron_device.name}"
+        return f"{self._area_name} {self._keypad_name}: {self._button_name}"
 
     @property
     def supported_features(self):
@@ -125,9 +127,12 @@ class LutronLedLight(LutronDevice, LightEntity):
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        # attr = {"lutron_integration_id": self._lutron_device.id}
-        # return attr
-        pass
+        attr = {
+            "lutron_integration_id": self._lutron_device.id,
+            "keypad_name": self._keypad_name,
+            "button_name": self._button_name
+        }
+        return attr
 
     @property
     def is_on(self):
