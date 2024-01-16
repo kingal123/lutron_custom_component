@@ -1,5 +1,5 @@
 """Support for Lutron Powr Savr occupancy sensors."""
-from pylutron import OccupancyGroup
+from .pylutronj import OccupancyGroup
 
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_OCCUPANCY,

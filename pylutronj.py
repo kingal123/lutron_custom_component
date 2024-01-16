@@ -16,7 +16,7 @@ import time
 
 from typing import Any, Callable, Dict, Type
 
-_LOGGER = logging.getLogger("pylutron")
+_LOGGER = logging.getLogger(__name__)
 
 # We brute force exception handling in a number of areas to ensure
 # connections can be recovered
@@ -58,7 +58,7 @@ class LutronConnection(threading.Thread):
     PROMPT = b'QNET> '
 
     def __init__(self, host, user, password, recv_callback):
-        _LOGGER.debug("Initializing pylutron version 3.5.1")
+        _LOGGER.debug("Initializing pylutron version 3.5.2")
         """Initializes the lutron connection, doesn't actually connect."""
         threading.Thread.__init__(self)
 
@@ -422,17 +422,20 @@ class LutronXmlDbParser(object):
 
     def _parse_led(self, keypad, component_xml):
         """Parses an LED device that part of a keypad."""
-        component_num = int(component_xml.get('ComponentNumber'))
+        component_number = int(component_xml.get('ComponentNumber'))
         led_base = 80
         if keypad.type == 'MAIN_REPEATER':
             led_base = 100
         elif keypad.type == 'PHANTOM':
             led_base = 2000
-        led_num = component_num - led_base
+        led_num = component_number - led_base
+        name = f"{keypad.name} {keypad.type} {component_number}"
+        _LOGGER.debug("Beginning LED parser for %s" % name)
+
         led = Led(self._lutron, keypad,
                   name=('LED %d' % led_num),
                   led_num=led_num,
-                  component_num=component_num,
+                  component_num=component_number,
                   uuid=component_xml.find('LED').get('UUID'))
         return led
 

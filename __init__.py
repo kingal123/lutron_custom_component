@@ -1,7 +1,7 @@
 """Component for interacting with a Lutron RadioRA 2 system."""
 import logging
 
-from pylutron import Button, Lutron
+from .pylutronj import Button, Lutron
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ID, CONF_HOST, CONF_PASSWORD, CONF_USERNAME
@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 def setup(hass, base_config):
     """Set up the Lutron component."""
-    _LOGGER.debug("Beginning lutronqs version 1.0.3 setup routine")
+    _LOGGER.debug("Beginning lutronqs version 1.0.4 setup routine")
 
     hass.data[LUTRON_BUTTONS] = []
     hass.data[LUTRON_CONTROLLER] = None
@@ -97,12 +97,12 @@ def setup(hass, base_config):
                     "SimpleConditional"
                 ):
                     # Associate an LED with a button if there is one
-                    # TODO check this a led is a scene?
+                    # TODO check this LED is a scene?
                     led = next(
                         (led for led in keypad.leds if led.number == button.number),
                         None,
                     )
-                    _LOGGER.debug("Adding Scene for area %s, keypad %s, button %s" % (area.name, keypad.name, button.name))
+                    _LOGGER.debug("Adding Scene for area %s, keypad %s, button %s, led %s" % (area.name, keypad.name, button.name, led))
                     hass.data[LUTRON_DEVICES]["scene"].append(
                          (area.name, keypad.name, button, led)
                     )
@@ -142,7 +142,7 @@ class LutronDevice(Entity):
         )
 
     def _update_callback(self, _device, _context, _event, _params):
-        """Run when invoked by pylutron when the device state changes."""
+        """Run when invoked by pylutronj when the device state changes."""
         self.schedule_update_ha_state()
 
     @property
