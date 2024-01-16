@@ -39,3 +39,13 @@ class LutronScene(LutronDevice, Scene):
     def name(self):
         """Return the name of the device."""
         return f"{self._keypad_name}: {self._lutron_device.name}"
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        attr = {
+            "keypad_name": self._keypad_name,
+            "button_name": self._lutron_device.name,
+            "led": self._led.state
+        }
+        return attr

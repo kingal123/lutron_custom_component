@@ -107,7 +107,7 @@ class LutronLedLight(LutronDevice, LightEntity):
     @property
     def name(self):
         """Return the name of the device."""
-        return f"{self._area_name} {self._keypad_name}: {self._button_name}"
+        return f"{self._keypad_name}: {self._button_name}"
 
     @property
     def supported_features(self):
@@ -128,7 +128,6 @@ class LutronLedLight(LutronDevice, LightEntity):
     def extra_state_attributes(self):
         """Return the state attributes."""
         attr = {
-            "lutron_integration_id": self._lutron_device.id,
             "keypad_name": self._keypad_name,
             "button_name": self._button_name
         }
