@@ -12,10 +12,7 @@ import time
 from homeassistant.components.cover import (
     PLATFORM_SCHEMA,
     ATTR_POSITION,
-    SUPPORT_CLOSE,
-    SUPPORT_OPEN,
-    SUPPORT_STOP,
-    SUPPORT_SET_POSITION,
+    CoverEntityFeature,
     CoverEntity,
 )
 from homeassistant.const import CONF_NAME
@@ -56,7 +53,7 @@ class LutronMotorBlind(LutronDevice, CoverEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP 
+        return CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.STOP
 
     @property
     def is_closed(self):
@@ -112,7 +109,7 @@ class LutronCover(LutronDevice, CoverEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_SET_POSITION
+        return CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.SET_POSITION
 
     @property
     def is_closed(self):

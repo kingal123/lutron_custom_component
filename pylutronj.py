@@ -254,7 +254,7 @@ class LutronXmlDbParser(object):
             if group.group_number:
                 self._occupancy_groups[group.group_number] = group
             else:
-                _LOGGER.warning("Occupancy Group has no number.  XML: %s" % group_xml)
+                _LOGGER.info("Occupancy Group has no number.  XML: %s" % group_xml)
 
         # First area is useless, it's the top-level project area that defines the
         # "house". It contains the real nested Areas tree, which is the one we want.

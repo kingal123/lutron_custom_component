@@ -2,7 +2,7 @@
 from .pylutronj import OccupancyGroup
 
 from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_OCCUPANCY,
+    BinarySensorDeviceClass,
     BinarySensorEntity,
 )
 
@@ -38,7 +38,7 @@ class LutronOccupancySensor(LutronDevice, BinarySensorEntity):
     @property
     def device_class(self):
         """Return that this is an occupancy sensor."""
-        return DEVICE_CLASS_OCCUPANCY
+        return BinarySensorDeviceClass.OCCUPANCY
 
     @property
     def name(self):
