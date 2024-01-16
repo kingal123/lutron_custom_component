@@ -58,7 +58,7 @@ class LutronConnection(threading.Thread):
     PROMPT = b'QNET> '
 
     def __init__(self, host, user, password, recv_callback):
-        _LOGGER.debug("Initializing pylutron version 3.5.2")
+        _LOGGER.debug("Initializing pylutronj version 3.5.2")
         """Initializes the lutron connection, doesn't actually connect."""
         threading.Thread.__init__(self)
 
