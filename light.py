@@ -5,7 +5,7 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS, 
     SUPPORT_BRIGHTNESS,
     LightEntity,
-    SUPPORT_FLASH,
+    LightEntityFeature,
 )
 
 from . import LUTRON_CONTROLLER, LUTRON_DEVICES, LutronDevice
@@ -112,7 +112,7 @@ class LutronLedLight(LutronDevice, LightEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_FLASH
+        return LightEntityFeature.FLASH
 
     def turn_on(self, **kwargs):
         """Turn the light on."""

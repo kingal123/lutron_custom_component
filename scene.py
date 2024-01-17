@@ -45,7 +45,6 @@ class LutronScene(LutronDevice, Scene):
         """Return the state attributes."""
         attr = {
             "keypad_name": self._keypad_name,
-            "button_name": self._lutron_device.name,
-            "led": self._led.state if self._led is not None else None
+            "button_name": self._lutron_device.name
         }
         return attr

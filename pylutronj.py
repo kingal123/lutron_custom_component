@@ -277,7 +277,7 @@ class LutronXmlDbParser(object):
         area_name = area_xml.get('Name')
         _LOGGER.debug("Beginning Area parser for %s" % area_name)
         if not occupancy_group:
-            _LOGGER.warning("Occupancy Group not found for Area: %s; ID: %s" % (area_name, occupancy_group_id))
+            _LOGGER.info("Occupancy Group not found for Area: %s; ID: %s" % (area_name, occupancy_group_id))
         area = Area(self._lutron,
                     name=area_name,
                     integration_id=int(area_xml.get('IntegrationID')),
