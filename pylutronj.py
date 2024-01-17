@@ -6,6 +6,7 @@ for enumerating and controlling the loads are supported.
 
 __author__ = "Dima Zavin"
 __copyright__ = "Copyright 2016, Dima Zavin"
+__version__ = "3.5.3"
 
 from enum import Enum
 import logging
@@ -58,7 +59,7 @@ class LutronConnection(threading.Thread):
     PROMPT = b'QNET> '
 
     def __init__(self, host, user, password, recv_callback):
-        _LOGGER.debug("Initializing pylutronj version 3.5.2")
+        _LOGGER.debug("Initializing pylutronj version %s" % __version__)
         """Initializes the lutron connection, doesn't actually connect."""
         threading.Thread.__init__(self)
 
@@ -421,7 +422,7 @@ class LutronXmlDbParser(object):
         return button
 
     def _parse_led(self, keypad, component_xml):
-        """Parses an LED device that part of a keypad."""
+        """Parses an LED device that is part of a keypad."""
         component_number = int(component_xml.get('ComponentNumber'))
         led_base = 80
         if keypad.type == 'MAIN_REPEATER':

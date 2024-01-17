@@ -42,7 +42,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 def setup(hass, base_config):
     """Set up the Lutron component."""
-    _LOGGER.debug("Beginning lutronqs version 1.0.4 setup routine")
+    _LOGGER.debug("Beginning lutronqs version 1.0.5 setup routine")
 
     hass.data[LUTRON_BUTTONS] = []
     hass.data[LUTRON_CONTROLLER] = None
@@ -107,10 +107,9 @@ def setup(hass, base_config):
                          (area.name, keypad.name, button, led)
                     )
 
-                    # XXXX Add the LED as a light device if is controlled via integration
-                    # Do not add LEDs as these have been added as attributes in the scenes (keypad buttons)
-                    #if not(led is None): # and button.led_logic==5:
-                    #    hass.data[LUTRON_DEVICES]["led"].append((area.name, keypad.name, button.name, led))
+                    # Add the LED as a light device if is controlled via integration
+                    if not(led is None): # and button.led_logic==5:
+                        hass.data[LUTRON_DEVICES]["led"].append((area.name, keypad.name, button.name, led))
 
                 hass.data[LUTRON_BUTTONS].append(
                     LutronButton(hass, area.name, keypad, button)
