@@ -77,7 +77,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         for output in area.outputs:
             platform = None
             _LOGGER.debug("Working on output %s", output.type)
-            if output.type == "SYSTEM_SHADE":
+            if output.type == "SYSTEM_SHADE" or output.type == "VENETIAN_BLIND":
                 entry_data.covers.append((area.name, output))
                 platform = Platform.COVER
             # elif output.type == "CEILING_FAN_TYPE":
