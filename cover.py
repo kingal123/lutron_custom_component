@@ -1,149 +1,85 @@
-"""Support for Lutron motorized blind."""
-# motor doesn't support OUTPUT,ID,1,0 or OUTPUT,ID,1,100 for some reason
-# you have to use OUTPUT,ID,2 open, 3 close, 4 stop
-# you cannot get the status because the stop command is setting level to 100
-# you need travel time to set open and close the blind
+"""Support for Lutron shades."""
 
-import voluptuous as vol
+from __future__ import annotations
+
+from collections.abc import Mapping
 import logging
-import asyncio
-import time
+from typing import Any
+
+from .pylutronj import Output
 
 from homeassistant.components.cover import (
-    PLATFORM_SCHEMA,
     ATTR_POSITION,
-    CoverEntityFeature,
     CoverEntity,
+    CoverEntityFeature,
 )
-from homeassistant.const import CONF_NAME
-from homeassistant.core import callback
-import homeassistant.helpers.config_validation as cv
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import LUTRON_CONTROLLER, LUTRON_DEVICES, LutronDevice
+from . import DOMAIN, LutronData
+from .entity import LutronDevice
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Lutron shades."""
-    devs = []
-    for (area_name, device) in hass.data[LUTRON_DEVICES]["cover"]:
-        if device.type == "MOTOR":
-            dev = LutronMotorBlind(area_name, device, hass.data[LUTRON_CONTROLLER])
-        else: 
-            dev = LutronCover(area_name, device, hass.data[LUTRON_CONTROLLER])
-        
-        devs.append(dev)
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the Lutron cover platform.
 
-    add_entities(devs, True)
-    return True
+    Adds shades from the Main Repeater associated with the config_entry as
+    cover entities.
+    """
+    entry_data: LutronData = hass.data[DOMAIN][config_entry.entry_id]
+    async_add_entities(
+        [
+            LutronCover(area_name, device, entry_data.client)
+            for area_name, device in entry_data.covers
+        ],
+        True,
+    )
 
-
-class LutronMotorBlind(LutronDevice, CoverEntity):
-    """Representation of a Lutron motorized blind."""
-
-    def __init__(self, area_name, lutron_device, controller):
-        """Initializes the Lutron Blind class."""
-        super().__init__(area_name, lutron_device, controller)
-        self._position = self._lutron_device.last_level()
-        self._is_opening = False
-        self._is_closing = False
-
-
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.STOP
-
-    @property
-    def is_closed(self):
-        """Return if the cover is closed."""
-        return self._position == 0
-
-    @property
-    def is_closing(self):
-        """Return if the cover is closed."""
-        return self._is_closing
-
-    @property
-    def is_opening(self):
-        """Return if the cover is closed."""
-        return self._is_opening
-
-    async def async_close_cover(self, **kwargs):
-        """Close the cover."""
-        self._position = 0    
-        self._is_closing = True
-        self._lutron_device.start_lowering()
-      
-    async def async_open_cover(self, **kwargs):
-        """Open the cover."""
-        self._position = 100
-        self._is_opening = True
-        self._lutron_device.start_raising()
-    
-
-    async def async_stop_cover(self, **kwargs):
-        """stop the cover."""
-        self._lutron_device.stop()
-        self._position = 50
-        self._is_opening = False
-        self._is_closing = False
-
-    def update(self):
-        """Call when forcing a refresh of the device."""
-        # Reading the property (rather than last_level()) fetches value
-        level = self._position
-        _LOGGER.debug("Lutron ID: %d updated to %f", self._lutron_device.id, level)
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        attr = {}
-        attr["Lutron Integration ID"] = self._lutron_device.id
-        return attr
 
 class LutronCover(LutronDevice, CoverEntity):
     """Representation of a Lutron shade."""
 
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.SET_POSITION
+    _attr_supported_features = (
+        CoverEntityFeature.OPEN
+        | CoverEntityFeature.CLOSE
+        | CoverEntityFeature.SET_POSITION
+    )
+    _lutron_device: Output
+    _attr_name = None
 
-    @property
-    def is_closed(self):
-        """Return if the cover is closed."""
-        return self._lutron_device.last_level() < 1
-
-    @property
-    def current_cover_position(self):
-        """Return the current position of cover."""
-        return self._lutron_device.last_level()
-
-    def close_cover(self, **kwargs):
+    def close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
         self._lutron_device.level = 0
 
-    def open_cover(self, **kwargs):
+    def open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
         self._lutron_device.level = 100
 
-    def set_cover_position(self, **kwargs):
+    def set_cover_position(self, **kwargs: Any) -> None:
         """Move the shade to a specific position."""
         if ATTR_POSITION in kwargs:
             position = kwargs[ATTR_POSITION]
             self._lutron_device.level = position
 
-    def update(self):
-        """Call when forcing a refresh of the device."""
-        # Reading the property (rather than last_level()) fetches value
-        level = self._lutron_device.level
+    def _request_state(self) -> None:
+        """Request the state from the device."""
+        _ = self._lutron_device.level
+
+    def _update_attrs(self) -> None:
+        """Update the state attributes."""
+        level = self._lutron_device.last_level()
+        self._attr_is_closed = level < 1
+        self._attr_current_cover_position = level
         _LOGGER.debug("Lutron ID: %d updated to %f", self._lutron_device.id, level)
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
         """Return the state attributes."""
-        attr = {}
-        attr["Lutron Integration ID"] = self._lutron_device.id
-        return attr
+        return {"lutron_integration_id": self._lutron_device.id}
