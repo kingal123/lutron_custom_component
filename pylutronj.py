@@ -277,7 +277,7 @@ class LutronXmlDbParser(object):
                 integration_id=int(area_xml.get('IntegrationID')),
                 occupancy_group=occupancy_group)
     for output_xml in area_xml.find('Outputs'):
-      output = self._parse_output(output_xml)
+      output = self._parse_output(output_xml, area_name)
       area.add_output(output)
     # device group in our case means keypad
     # device_group.get('Name') is the location of the keypad
@@ -313,7 +313,7 @@ class LutronXmlDbParser(object):
         #elif device_xml.get('DeviceType') == 'VISOR_CONTROL_RECEIVER':
     return area
 
-  def _parse_output(self, output_xml):
+  def _parse_output(self, output_xml, area_name):
     """Parses an output, which is generally a switch controlling a set of
     lights/outlets, etc."""
     output_type = output_xml.get('OutputType')
@@ -325,7 +325,8 @@ class LutronXmlDbParser(object):
       'uuid': output_xml.get('UUID')
     }
     if output_type == 'SYSTEM_SHADE':
-      return Shade(self._lutron, **kwargs)
+        kwargs['name'] = f"{area_name} - {kwargs['name']}"
+        return Shade(self._lutron, **kwargs)
     return Output(self._lutron, **kwargs)
 
   def _parse_keypad(self, keypad_xml, device_group):
@@ -369,6 +370,9 @@ class LutronXmlDbParser(object):
     # Hybrid keypads have dimmer buttons which have no engravings.
     if button_type == 'SingleSceneRaiseLower':
       name = 'Dimmer ' + direction
+    elif button_type == 'MasterRaiseLower':
+      name = direction
+
     if not name:
       name = "Unknown Button"
     button = Button(self._lutron, keypad,

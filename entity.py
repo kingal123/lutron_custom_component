@@ -65,7 +65,7 @@ class LutronDevice(LutronBaseEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.unique_id)},
             manufacturer="Lutron",
-            name=f"{area_name} - {lutron_device.name}",
+            name=lutron_device.name,
             suggested_area=area_name,
             via_device=(DOMAIN, controller.guid),
         )

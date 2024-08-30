@@ -57,8 +57,7 @@ class LutronScene(LutronKeypad, Scene):
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        attr = {
+        return {
             "keypad_name": self._keypad_name,
             "button_name": self._attr_name
         }
-        return attr
