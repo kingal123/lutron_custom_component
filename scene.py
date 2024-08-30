@@ -47,8 +47,18 @@ class LutronScene(LutronKeypad, Scene):
     ) -> None:
         """Initialize the scene/button."""
         super().__init__(area_name, lutron_device, controller, keypad)
+        self._keypad_name = keypad.name
         self._attr_name = lutron_device.name
 
     def activate(self, **kwargs: Any) -> None:
         """Activate the scene."""
         self._lutron_device.press()
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        attr = {
+            "keypad_name": self._keypad_name,
+            "button_name": self._attr_name
+        }
+        return attr
