@@ -16,7 +16,7 @@ import socket
 import threading
 import time
 
-from ._telnetlib import telnetlib
+from _telnetlib import telnetlib
 from typing import Any, Callable, Dict, Type
 
 _LOGGER = logging.getLogger(__name__)
@@ -386,7 +386,7 @@ class LutronXmlDbParser(object):
     if keypad.type == 'MAIN_REPEATER':
       led_base = 100
     led_num = component_num - led_base
-    name = f"{keypad.name} {keypad.type} {component_number}"
+    name = f"{keypad.name} {keypad.type} {component_num}"
     _LOGGER.debug("Beginning LED parser for %s" % name)
     led = Led(self._lutron, keypad,
               name=('LED %d' % led_num),
