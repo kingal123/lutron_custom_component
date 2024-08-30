@@ -295,13 +295,16 @@ class LutronXmlDbParser(object):
         if device_xml.get('DeviceType') in (
             'HWI_SEETOUCH_KEYPAD',
             'SEETOUCH_KEYPAD',
-            'INTERNATIONAL_SEETOUCH_KEYPAD',
             'SEETOUCH_TABLETOP_KEYPAD',
             'PICO_KEYPAD',
             'HYBRID_SEETOUCH_KEYPAD',
             'MAIN_REPEATER',
             'HOMEOWNER_KEYPAD',
-            'GRAFIK_T_HYBRID_KEYPAD'):
+            'GRAFIK_T_HYBRID_KEYPAD',
+            'INTERNATIONAL_SEETOUCH_KEYPAD',
+            'WCI',
+            'QS_IO_INTERFACE'):
+
           keypad = self._parse_keypad(device_xml, device_group)
           area.add_keypad(keypad)
         elif device_xml.get('DeviceType') == 'MOTION_SENSOR':
@@ -327,8 +330,17 @@ class LutronXmlDbParser(object):
 
   def _parse_keypad(self, keypad_xml, device_group):
     """Parses a keypad device (the Visor receiver is technically a keypad too)."""
+    # in HW the keypad standard name is CSD 001 or Control Station Device 001, we use the integration ID name instead
+    name = keypad_xml.get('Name')
+    _LOGGER.debug("Beginning Keypad parser for %s" % name)
+
+    if (keypad_xml.get('Name') in ["CSD 001", "Control Station Device 001"]):
+      # Assumes that keypad names are unique
+      name = device_group.get('Name')
+      _LOGGER.debug("Updating Keypad name to %s" % name)
+
     keypad = Keypad(self._lutron,
-                    name=keypad_xml.get('Name'),
+                    name=name,
                     keypad_type=keypad_xml.get('DeviceType'),
                     location=device_group.get('Name'),
                     integration_id=int(keypad_xml.get('IntegrationID')),
@@ -374,6 +386,8 @@ class LutronXmlDbParser(object):
     if keypad.type == 'MAIN_REPEATER':
       led_base = 100
     led_num = component_num - led_base
+    name = f"{keypad.name} {keypad.type} {component_number}"
+    _LOGGER.debug("Beginning LED parser for %s" % name)
     led = Led(self._lutron, keypad,
               name=('LED %d' % led_num),
               led_num=led_num,

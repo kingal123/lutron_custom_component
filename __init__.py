@@ -114,6 +114,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
                 if button.name != "Unknown Button" and button.button_type in (
                     "SingleAction",
                     "Toggle",
+                    "AdvancedToggle",
                     "SingleSceneRaiseLower",
                     "MasterRaiseLower",
                 ):
