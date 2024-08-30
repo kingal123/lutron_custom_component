@@ -16,7 +16,7 @@ import socket
 import threading
 import time
 
-from _telnetlib import telnetlib
+from ._telnetlib import telnetlib
 from typing import Any, Callable, Dict, Type
 
 _LOGGER = logging.getLogger(__name__)
