@@ -324,7 +324,7 @@ class LutronXmlDbParser(object):
       'integration_id': int(output_xml.get('IntegrationID')),
       'uuid': output_xml.get('UUID')
     }
-    if output_type == 'SYSTEM_SHADE':
+    if output_type == 'SYSTEM_SHADE' or output_type == 'VENETIAN_BLIND':
         kwargs['name'] = f"{area_name} - {kwargs['name']}"
         return Shade(self._lutron, **kwargs)
     return Output(self._lutron, **kwargs)
