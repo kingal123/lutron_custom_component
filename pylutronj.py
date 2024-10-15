@@ -301,6 +301,7 @@ class LutronXmlDbParser(object):
             'MAIN_REPEATER',
             'HOMEOWNER_KEYPAD',
             'GRAFIK_T_HYBRID_KEYPAD',
+            'PALLADIOM_KEYPAD',
             'INTERNATIONAL_SEETOUCH_KEYPAD',
             'WCI',
             'QS_IO_INTERFACE'):
